@@ -1,7 +1,12 @@
 #include<graphics.h>
 
+#define UP 0x4800
+#define DOWN 0x5000
+#define LEFT 0x4B00
+#define RIGHT 0x4D00
+#define ESC 0x011B
+
 int num[10][10],upalpha[26][10],lowalpha[26][10];		//数字，字母的点阵存储数组 
-int screen=0;
 
 /**************************************************/
 /*在屏幕上打印一个字符                            */
@@ -61,6 +66,8 @@ void pwhomepage(){
 	char *down=_vp+200*800+200;
 	char *mid=up;
 	
+	tmp_bar=malloc(40501);
+	tmp_h_bar=malloc(40501);
 	setfillstyle(SOLID_FILL,RED);
 	bar(200,50,600,150);
 	getimage(200,50,600,150,tmp_h_bar);
@@ -70,22 +77,19 @@ void pwhomepage(){
 	getimage(200,50,600,150,tmp_bar);
 	
 	putimage(200,50,tmp_h_bar,COPY_PUT);
-	while(1){
-		if(bioskey(1)){
+		while(bioskey(1)==0){
 			key=bioskey(0);
+			if(key==0x4800&&mid==down){
+				mid=up;
+				putimage(200,50,tmp_h_bar,COPY_PUT);
+				putimage(200,200,tmp_bar,COPY_PUT);
+			}
+			else if(key==0x5000&&mid==up){
+				mid=down;
+				putimage(200,50,tmp_bar,COPY_PUT);
+				putimage(200,200,tmp_h_bar,COPY_PUT);
+			}
 		}
-		else continue;
-		if(key==_UP&&mid==down){
-			mid=up;
-			putimage(200,50,tmp_h_bar,COPY_PUT);
-			putimage(200,200,tmp_bar,COPY_PUT);
-		}
-		if(key==_DOWN&&mid==up){
-			mid=down;
-			putimage(200,50,tmp_bar,COPY_PUT);
-			putimage(200,200,tmp_h_bar,COPY_PUT);
-		}
-	}
 } 
 /*----------------------------------------------------------------------------------*/ 
 
