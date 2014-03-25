@@ -77,7 +77,8 @@ void pwhomepage(){
 	getimage(200,50,600,150,tmp_bar);
 	
 	putimage(200,50,tmp_h_bar,COPY_PUT);
-		while(bioskey(1)==0){
+	while(1)
+		if(bioskey(1)!=0){
 			key=bioskey(0);
 			if(key==0x4800&&mid==down){
 				mid=up;
