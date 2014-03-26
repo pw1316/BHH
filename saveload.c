@@ -1,3 +1,4 @@
+//TODO 把sl改为单用户单文件
 #include <stdio.h>
 struct profile {
 		char name[10];
@@ -9,18 +10,15 @@ int readfile (int userid,struct profile *user){
 	struct profile reada[10];
 	char c;
 	int n=0;
-	fp=fopen("save.dat","r");
+	char file[100];
+	sprintf(file,"save%d.dat",userid)
+	fp=fopen(file,"r");
 	if(fp==NULL) return 0;
-    while(!feof(fp)) {
-       fscanf(fp, "%s %d %d ", reada[n].name,&reada[n].num,&reada[n].score);
-       n++;
-       }
-	
+    fscanf(fp, "%s %d %d ", reada[n].name,&reada[n].num,&reada[n].score);
 	fclose(fp);
-	if (userid<=n)
+	/*if (userid<=n)
     *user = reada[userid];
-    else
-    	return 0;
+    else*/
     return 1;
 }
 void writefile (int userid, struct profile *user){
@@ -43,6 +41,7 @@ int newfile (){
 	fprintf(fp, "%s %d %d\n",a,x,x);
 	fclose(fp);
 }
+int newprofile (int userid, struct profile *new
 int zmjtestmain(){
 	char a[2];
 	struct profile test2={"test2",1,100},test1={"\0",0,0};
