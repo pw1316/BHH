@@ -11,17 +11,17 @@ int readfile (int userid,struct profile *user){
 	int n=0;
 	fp=fopen("save.dat","r");
 	if(fp==NULL) return 0;
-    while(!feof(fp)) {
-       fscanf(fp, "%s %d %d ", reada[n].name,&reada[n].num,&reada[n].score);
-       n++;
-       }
+    	while(!feof(fp)) {
+       		fscanf(fp, "%s %d %d ", reada[n].name,&reada[n].num,&reada[n].score);
+       		n++;
+       		}
 	
 	fclose(fp);
 	if (userid<=n)
-    *user = reada[userid];
-    else
-    	return 0;
-    return 1;
+    	*user = reada[userid];
+    	else
+    		return 0;
+    	return 1;
 }
 void writefile (int userid, struct profile *user){
 	FILE *fp;
@@ -31,9 +31,9 @@ void writefile (int userid, struct profile *user){
 	for(n=0;readfile(n,writea + n);n++);
 	writea[userid]=*user;
 	fp=fopen("save.dat","w");
-    for(i=0; i < n-1; i++) 
-      fprintf(fp, "%s %d %d\n", writea[i].name,writea[i].num,writea[i].score);
-    fclose(fp);
+    	for(i=0; i < n-1; i++) 
+      	   fprintf(fp, "%s %d %d\n", writea[i].name,writea[i].num,writea[i].score);
+    	fclose(fp);
 }
 int newfile (){
 	FILE *fp;
