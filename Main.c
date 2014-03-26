@@ -5,6 +5,10 @@
 #define LEFT 0x4B00
 #define RIGHT 0x4D00
 #define ESC 0x011B
+#define ENTER 0x1C0D
+
+#define BAR_WIDTH 250
+#define BAR_HEIGHT 50
 
 int num[10][10],upalpha[26][10],lowalpha[26][10];		//数字，字母的点阵存储数组 
 
@@ -58,38 +62,80 @@ void pwbackground(){
 
 
 /*----------------------------------主页相关----------------------------------------*/
-
 void pwhomepage(){
-	int key;
-	void *tmp_bar,*tmp_h_bar;
-	char *up=_vp+50*800+200;
-	char *down=_vp+200*800+200;
-	char *mid=up;
+	struct Pos{
+		int x;
+		int y;
+	};//表示位置
+	int key;//按下的键
+	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
+	int index=0;//高亮方块编号
+	struct Pos pos[10]={{275,240},{275,330},{275,420},{275,510}};//各方块位置
 	
-	tmp_bar=malloc(40501);
-	tmp_h_bar=malloc(40501);
+	/*分配getimage空间*/
+	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
+	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
+	
+	/*得到高亮方块*/
 	setfillstyle(SOLID_FILL,RED);
-	bar(200,50,600,150);
-	getimage(200,50,600,150,tmp_h_bar);
-	setfillstyle(SOLID_FILL,0x1A);
-	bar(200,50,600,150);
-	bar(200,200,600,300);
-	getimage(200,50,600,150,tmp_bar);
+	bar(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1);
+	getimage(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1,tmp_h_bar);
 	
-	putimage(200,50,tmp_h_bar,COPY_PUT);
+	/*画低亮方块*/ 
+	setfillstyle(SOLID_FILL,0x1A);
+	bar(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1);
+	bar(pos[1].x,pos[1].y,pos[1].x+BAR_WIDTH-1,pos[1].y+BAR_HEIGHT-1);
+	bar(pos[2].x,pos[2].y,pos[2].x+BAR_WIDTH-1,pos[2].y+BAR_HEIGHT-1);
+	bar(pos[3].x,pos[3].y,pos[3].x+BAR_WIDTH-1,pos[3].y+BAR_HEIGHT-1);
+	
+	/*打低亮字*/ 
+	setcolor(WHITE);
+	outtextxy(pos[1].x+20,pos[1].y+BAR_HEIGHT/5*2,"SBSBSB");
+	outtextxy(pos[2].x+20,pos[2].y+BAR_HEIGHT/5*2,"SBSBSB");
+	outtextxy(pos[3].x+20,pos[3].y+BAR_HEIGHT/5*2,"SBSBSB");
+	
+	/*得到低亮方块*/ 
+	getimage(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1,tmp_bar);
+	
+	/*画高亮方块及高亮字*/ 
+	putimage(pos[0].x,pos[0].y,tmp_h_bar,COPY_PUT);
+	setcolor(YELLOW);
+	outtextxy(pos[0].x+20,pos[0].y+BAR_HEIGHT/5*2,"SBSBSB");
+	
+	/*循环键盘输入*/ 
 	while(1)
 		if(bioskey(1)!=0){
 			key=bioskey(0);
-			if(key==0x4800&&mid==down){
-				mid=up;
-				putimage(200,50,tmp_h_bar,COPY_PUT);
-				putimage(200,200,tmp_bar,COPY_PUT);
-			}
-			else if(key==0x5000&&mid==up){
-				mid=down;
-				putimage(200,50,tmp_bar,COPY_PUT);
-				putimage(200,200,tmp_h_bar,COPY_PUT);
-			}
+			if(key==UP&&index!=0){
+				putimage(pos[index].x,pos[index].y,tmp_bar,COPY_PUT);
+				setcolor(WHITE);
+				outtextxy(pos[index].x+20,pos[index].y+BAR_HEIGHT/5*2,"SBSBSB");
+				index--;
+				putimage(pos[index].x,pos[index].y,tmp_h_bar,COPY_PUT);
+				setcolor(YELLOW);
+				outtextxy(pos[index].x+20,pos[index].y+BAR_HEIGHT/5*2,"SBSBSB");
+				setfillstyle(SOLID_FILL,BLUE);
+				bar(100,100,200,200);
+			}//按下上键 
+			else if(key==DOWN&&index!=3){
+				putimage(pos[index].x,pos[index].y,tmp_bar,COPY_PUT);
+				setcolor(WHITE);
+				outtextxy(pos[index].x+20,pos[index].y+BAR_HEIGHT/5*2,"SBSBSB");
+				index++;
+				putimage(pos[index].x,pos[index].y,tmp_h_bar,COPY_PUT);
+				setcolor(YELLOW);
+				outtextxy(pos[index].x+20,pos[index].y+BAR_HEIGHT/5*2,"SBSBSB");
+				setfillstyle(SOLID_FILL,BLUE);
+				bar(100,100,200,200);
+			}//按下下键 
+			else if(key==0x011B){
+				return;
+			}//按下ESC 
+			else if(key==ENTER){
+				setcolor(WHITE);
+				outtextxy(100,100,"YOU");
+			}//按下回车 
+			else printf("%x\n",key);//测试按键的码 
 		}
 } 
 /*----------------------------------------------------------------------------------*/ 
