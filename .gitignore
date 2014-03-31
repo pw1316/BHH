@@ -20,3 +20,5 @@
 *.err
 *.obj
 *.dump
+# savedata
+.sav
