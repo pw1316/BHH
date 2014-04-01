@@ -30,19 +30,12 @@ void writefile (int userid, struct profile *user){
 void newfile (int userid){
 	FILE *fp;
 	char a[10];
+	int x=0;
 	sprintf(a,"save%d.sav",userid);
 	fp=fopen(a,"w");
-	int x=0;
 	fprintf(fp, "%s %d %d\n",a,x,x);
 	fclose(fp);
 }
-
-
-
-
-
-
-
 
 //test 将test2写入文件 再读入test1中 再输出
 int testmain(){
