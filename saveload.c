@@ -6,7 +6,7 @@ struct profile {
    		int score;
 	};
 //userid为用户编号，生成save%d.sav作为标记 | user为结构指针用于传递读取or写入的信息
-int readfile (int userid,struct profile *user){
+void readfile (int userid,struct profile *user){
 	FILE *fp;
 	struct profile reada[10];
 	char c;
@@ -27,7 +27,7 @@ void writefile (int userid, struct profile *user){
     fclose(fp);
 }
 //新建一个覆盖原来的user
-int newfile (int userid){
+void newfile (int userid){
 	FILE *fp;
 	char a[10];
 	sprintf(a,"save%d.sav",userid);
