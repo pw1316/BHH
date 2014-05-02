@@ -40,10 +40,7 @@ int main(){
 
 void pw_background(){
 	int i,j;
-	char *p;
-	void *wel;
-	char c1,c2,num;
-
+	/*此处需要大标题图案*/
 	for(i=0;i<462400;i++){
 		*(_vp+i)=BLUE;
     }
