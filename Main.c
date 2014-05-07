@@ -14,8 +14,10 @@
 int curid=-1;
 struct profile {
 		char name[10];
-   		char num[10];
-   		char score[10];
+   		char gender[2];
+   		char age[3];
+   		char height[4];
+   		char weight[4];
 	};
 
 void pw_background();//»­±³¾° 
@@ -27,7 +29,7 @@ void pw_homebar4();
 struct profile* readfile (int userid);
 void newfile(int userid);
 
-char* input(int x,int y);
+char* input(int x,int y,int max);
 
 int main(){
 	FILE *fp;
@@ -92,7 +94,7 @@ void pw_homepage(){
 	while(1)
 		if(bioskey(1)!=0){
 			key=bioskey(0);
-			if(key==UP&&index!=0){
+			if((key==UP||key==LEFT)&&index!=0){
 				putimage(pos[index].x,pos[index].y,tmp_bar,COPY_PUT);
 				setcolor(WHITE);
 				outtextxy(pos[index].x+8,pos[index].y+BAR_HEIGHT*11/30,text[index]);
@@ -101,7 +103,7 @@ void pw_homepage(){
 				setcolor(YELLOW);
 				outtextxy(pos[index].x+8,pos[index].y+BAR_HEIGHT*11/30,text[index]);
 			}//°´ÏÂÉÏ¼ü 
-			else if(key==DOWN&&index!=4){
+			else if((key==DOWN||key==RIGHT)&&index!=4){
 				putimage(pos[index].x,pos[index].y,tmp_bar,COPY_PUT);
 				setcolor(WHITE);
 				outtextxy(pos[index].x+8,pos[index].y+BAR_HEIGHT*11/30,text[index]);
@@ -123,6 +125,8 @@ void pw_homepage(){
 
 void pw_homebar0(){
 	struct profile* user;
+	int line=220;
+	char a[50];
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
 	if(curid==-1){
@@ -137,9 +141,11 @@ void pw_homebar0(){
 	else{
 		user=readfile(curid);
 		setcolor(WHITE);
-		outtextxy(460,220,user->name);
-		outtextxy(460,240,user->num);
-		outtextxy(460,260,user->score);
+		sprintf(a,"Name:%s",user->name);outtextxy(460,line,a);line+=20;
+		sprintf(a,"Gender:%s",user->gender);outtextxy(460,line,a);line+=20;
+		sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
+		sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
+		sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
 	}
 }
 
@@ -154,7 +160,7 @@ void pw_homebar4(){
 	
 	setcolor(WHITE);
 	outtextxy(460,line,"What Is Your Id?");line+=20;
-	strcpy(idd,input(460,line));line+=20;
+	strcpy(idd,input(460,line,10));line+=20;
 	while(idd[index]!=0){
 		id=id*10+idd[index]-48;
 		index++;
@@ -217,7 +223,7 @@ struct profile* readfile (int userid){
 		return NULL; 
 	}
 	else{
-		fscanf(fp,"%s %s %s\n",user->name,user->num,user->score);
+		fscanf(fp,"%s %s %s %s %s\n",user->name,user->gender,user->age,user->height,user->weight);
 		fclose(fp);
 		return user;
 	}
@@ -228,6 +234,7 @@ void newfile (int userid){
 	char a[20];
 	char ss[11];
 	int line=220;
+	char valid[]="Invalid!";
 	
 	ss[0]=0;
 	sprintf(a,"save%d.sav",userid);
@@ -235,32 +242,79 @@ void newfile (int userid){
 	
 	setcolor(WHITE);
 	
-	outtextxy(460,line,"NAME:");
-	strcpy(ss,input(508,line));
+	outtextxy(460,line,"NAME:");line+=20;
+	strcpy(ss,input(480,line,10));
+	while(strcmp(ss,"null")==0||ss[0]>=48&&ss[0]<=57){
+		setcolor(WHITE);
+		outtextxy(600,line,valid);
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(480,line,560,line+12);
+		strcpy(ss,input(480,line,10));
+	}
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
-	outtextxy(460,line,"NUM:");
-	strcpy(ss,input(508,line));
+	outtextxy(460,line,"GENDER:");line+=20;
+	strcpy(ss,input(480,line,1));
+	while(ss[0]!='M'&&ss[0]!='F'){
+		setcolor(WHITE);
+		outtextxy(600,line,valid);
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(480,line,488,line+12);
+		strcpy(ss,input(480,line,1));
+	}
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
-	outtextxy(460,line,"SCORE:");
-	strcpy(ss,input(508,line));
+	outtextxy(460,line,"AGE:");line+=20;
+	strcpy(ss,input(480,line,2));
+	while(ss[0]<48||ss[0]>57||ss[1]<48||ss[1]>57){
+		setcolor(WHITE);
+		outtextxy(600,line,valid);
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(480,line,500,line+12);
+		strcpy(ss,input(480,line,2));
+	}
+	fprintf(fp,"%s ",ss);line+=20;
+	
+	outtextxy(460,line,"HEIGHT:");line+=20;
+	strcpy(ss,input(480,line,3));
+	while(ss[0]<48||ss[0]>57||ss[1]<48||ss[1]>57||ss[2]<48||ss[2]>57){
+		setcolor(WHITE);
+		outtextxy(600,line,valid);
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(480,line,500,line+12);
+		strcpy(ss,input(480,line,3));
+	}
+	fprintf(fp,"%s ",ss);line+=20;
+	
+	outtextxy(460,line,"WEIGHT:");line+=20;
+	strcpy(ss,input(480,line,3));
+	while(ss[0]<48||ss[0]>57||ss[1]<48||ss[1]>57||ss[2]<48||ss[2]>57){
+		setcolor(WHITE);
+		outtextxy(600,line,valid);
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(480,line,500,line+12);
+		strcpy(ss,input(480,line,3));
+	}
 	fprintf(fp,"%s",ss);line+=20;
 	
 	fclose(fp);
 }
 
-void writefile (int userid, struct profile *user){
-	FILE *fp;
-	char a[20];
-	int n,i;
-	sprintf(a,"save%d.sav",userid);
-	fp=fopen(a,"w");
-    fprintf(fp,"%s %s %s\n",user->name,user->num,user->score);
-    fclose(fp);
-}
+//void writefile (int userid, struct profile *user){
+//	FILE *fp;
+//	char a[20];
+//	int n,i;
+//	sprintf(a,"save%d.sav",userid);
+//	fp=fopen(a,"w");
+//    fprintf(fp,"%s %s %s\n",user->name,user->num,user->score);
+//    fclose(fp);
+//}
 
-char* input(int x,int y){
+char* input(int x,int y,int max){
 	char c;
 	char s[2],ss[11];
 	int index=0;
@@ -276,7 +330,7 @@ char* input(int x,int y){
 				return ss;
 			}
 			else if(key==BACKSPACE){
-				if(pos>y){
+				if(pos>x){
 					pos-=8;
 					setfillstyle(SOLID_FILL,DARKGRAY);
 					bar(pos,line,pos+8,line+11);
@@ -284,7 +338,7 @@ char* input(int x,int y){
 					ss[index]=0;
 				}
 			}
-			else if(index<10){
+			else if(index<max){
 				c=key&0xFF;
 				s[0]=c;
 				outtextxy(pos,line,s);
