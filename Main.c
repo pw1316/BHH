@@ -27,6 +27,7 @@ struct menu{
 	int SUGAR;
 	int PROCNT;//µ°°×ÖÊ£¿
 }
+
 void pw_background();//»­±³¾° 
 void pw_homepage();//»­Ö÷Ò³
  
