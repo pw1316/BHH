@@ -21,11 +21,10 @@ struct profile {
    		int recoder=10; // 记录饮食，可以：没吃-2 素-1 大素+0 荤+1 大荤+2  或者根据体重什么的加判断
 	};
 struct menu{
+	int recipeID;
 	char name[10];
-	int Energy;//kcal
-	int fat;//gram
-	int SUGAR;
-	int PROCNT;//蛋白质？
+	double Energy;//kcal
+	double PROCNT;//蛋白质？
 }
 void pw_background();//画背景 
 void pw_homepage();//画主页
