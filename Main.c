@@ -23,10 +23,9 @@ struct profile {
 struct menu{
 	int recipeID;
 	char name[10];
-	double Energy;//kcal
-	double PROCNT;//µ°°×ÖÊ£¿
+	double energy;//kcal
+	double procnt;//µ°°×ÖÊ£¿
 }
-
 void pw_background();//»­±³¾° 
 void pw_homepage();//»­Ö÷Ò³
  
