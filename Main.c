@@ -26,6 +26,7 @@ struct menu{
 	double Energy;//kcal
 	double PROCNT;//µ°°×ÖÊ£¿
 }
+
 void pw_background();//»­±³¾° 
 void pw_homepage();//»­Ö÷Ò³
  
