@@ -18,7 +18,7 @@ struct profile {
    		char age[3];
    		char height[4];
    		char weight[4];
-   		int recoder=10; // 记录饮食，可以：没吃-2 素-1 大素+0 荤+1 大荤+2  或者根据体重什么的加判断
+   		int recoder; // 记录饮食，可以：没吃-2 素-1 大素+0 荤+1 大荤+2  或者根据体重什么的加判断
 	};
 struct menu{
 	int recipeID;
