@@ -25,7 +25,7 @@ struct menu{
 	char name[10];
 	double energy;//kcal
 	double procnt;//µ°°×ÖÊ£¿
-}
+};
 void pw_background();//»­±³¾° 
 void pw_homepage();//»­Ö÷Ò³
  
