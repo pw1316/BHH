@@ -5,6 +5,14 @@ struct profile {
    		int num;
    		int score;
 	};
+//菜品结构
+struct menu{
+	int recipeID;
+	char name[70];
+	int energy;//kcal
+	int procnt;//蛋白质？
+} load[100];
+int recipenum=2;//NEW! 记录菜品总数！
 //userid为用户编号，生成save%d.sav作为标记 | user为结构指针用于传递读取or写入的信息
 void readfile (int userid,struct profile *user){
 	FILE *fp;
@@ -38,16 +46,21 @@ void newfile (int userid){
 }
 
 //test 将test2写入文件 再读入test1中 再输出
-int testmain(){
-	char a[2];
-	struct profile test2={"test2",1,100},test1={"\0",0,0};
-	struct profile *p,*q;
-	p=&test2;
-	q=&test1;
-	newfile(0);
-	writefile(0,p);
-	readfile(0,q);
-	printf("%s %d %d\n",test1.name,test1.num,test1.score);
-	gets(a);
-    return 0;
+int main(){
+	int i,x=0;
+	char a[100];
+	char *ap=a;
+//	FILE *fp;
+//	fp=fopen("recipes","r");
+//	fscanf(fp,"%d %s",&x,ap);
+//	printf("%d \n%s\n", x,ap);
+//以下为使用方法
+	FILE *fp;
+	fp=fopen("recipes","r");
+	for (i=0;i<recipenum;i++){
+		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+i)->recipeID),(load+i)->name,&((load+i)->energy),&((load+i)->procnt));
+	}//把所有菜品读取
+	fclose(fp);
+	for (i=0;i<recipenum;i++)
+	printf("%d \n%s \n%d \n%d\n",load[i].recipeID,load[i].name,load[i].energy,load[i].procnt);//测试输出
 }
