@@ -28,7 +28,8 @@ struct menu{
 };
 void pw_background();//画背景 
 void pw_homepage();//画主页
- 
+
+void pw_homebar3(); 
 void pw_homebar0();
 void pw_homebar4();
 
@@ -152,6 +153,33 @@ void pw_homebar0(){
 		sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
+	}
+}
+
+void pw_homebar3(){
+	int index=1;
+	char a[20];
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(440,210,700,529);
+	sprintf(a,"pic\\%d.bmp",index);
+	load_8bit_bmp(440,210,a);
+	while(1)
+	if(bioskey(1)!=0){
+		key=bioskey(0);
+		if((key==UP||key==LEFT)&&index!=1){
+			index--;
+			sprintf(a,"pic\\%d.bmp",index);
+			load_8bit_bmp(440,210,a);
+		}//按下上键 
+		else if((key==DOWN||key==RIGHT)&&index!=4){
+			index++;
+			sprintf(a,"pic\\%d.bmp",index);
+			load_8bit_bmp(440,210,a);
+		}//按下下键 
+		else if(key==0x011B){
+			return;
+		}//按下ESC 
+		else printf("%x\n",key);//测试按键的码 
 	}
 }
 
