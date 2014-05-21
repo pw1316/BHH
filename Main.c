@@ -125,6 +125,7 @@ void pw_homepage(){
 			else if(key==ENTER){
 				if(index==0) pw_homebar0();
 				if(index==4) pw_homebar4();
+				if(index==3) pw_homebar3();
 			}//按下回车
 			else printf("%x\n",key);//测试按键的码 
 		}
@@ -157,26 +158,29 @@ void pw_homebar0(){
 }
 
 void pw_homebar3(){
-	int index=1;
+	void *old;
+	int index=1,key;
+	int posx=90,posy=40;
 	char a[20];
-	setfillstyle(SOLID_FILL,DARKGRAY);
-	bar(440,210,700,529);
+	old=malloc(800*600);
+	getimage(0,0,799,599,old);
 	sprintf(a,"pic\\%d.bmp",index);
-	load_8bit_bmp(440,210,a);
+	load_8bit_bmp(posx,posy,a);
 	while(1)
 	if(bioskey(1)!=0){
 		key=bioskey(0);
 		if((key==UP||key==LEFT)&&index!=1){
 			index--;
 			sprintf(a,"pic\\%d.bmp",index);
-			load_8bit_bmp(440,210,a);
+			load_8bit_bmp(posx,posy,a);
 		}//按下上键 
-		else if((key==DOWN||key==RIGHT)&&index!=4){
+		else if((key==DOWN||key==RIGHT)&&index!=2){
 			index++;
 			sprintf(a,"pic\\%d.bmp",index);
-			load_8bit_bmp(440,210,a);
+			load_8bit_bmp(posx,posy,a);
 		}//按下下键 
 		else if(key==0x011B){
+			putimage(0,0,old,COPY_PUT);
 			return;
 		}//按下ESC 
 		else printf("%x\n",key);//测试按键的码 
