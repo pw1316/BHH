@@ -12,8 +12,9 @@
 #define BAR_HEIGHT 50
 
 int curid=-1;
+
 struct profile {
-		char name[10];
+		char name[11];
    		char gender[2];
    		char age[3];
    		char height[4];
@@ -22,7 +23,7 @@ struct profile {
 	};
 struct menu{
 	int recipeID;
-	char name[10];
+	char name[11];
 	double energy;//kcal
 	double procnt;//蛋白质？
 };
@@ -50,13 +51,21 @@ int main(){
 
 void pw_background(){
 	int i,j;
-	/*此处需要大标题图案*/
+	PIC *title;
+	
 	for(i=0;i<462400;i++){
 		*(_vp+i)=BLUE;
     }
 	for(i=462400;i<480000;i++){
 	    *(_vp+i)=DARKGRAY;
 	}
+	
+	setcolor(WHITE);
+	title=get_ttf_text_pic("My Health","font\\msyhbd.ttc",60); 
+	draw_picture(200,50,title);
+	destroy_picture(title);
+	
+	outtextxy(8,582,"Roll up(UP,LEFT) Roll down(DOWN,RIGHT) Confirm(ENTER)");
 }
 
 void pw_homepage(){
@@ -162,7 +171,7 @@ void pw_homebar3(){
 	void *old;
 	int index=1,key;
 	int posx=90,posy=40;
-	char a[20];
+	char a[50];
 	old=malloc(800*600);
 	getimage(0,0,799,599,old);
 	sprintf(a,"pic\\%d.bmp",index);
@@ -192,7 +201,7 @@ void pw_homebar4(){
 	int line=220;
 	int id=0,key,index=0;
 	char s[50],idd[4];
-	char a[20];
+	char a[50];
 	struct profile* user;
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
@@ -256,13 +265,13 @@ struct profile* readfile (int userid){
 	char c;
 	char a[20];
 	int n=0;
-	sprintf(a,"save%d.sav",userid);
+	sprintf(a,"save\\save%d.sav",userid);
 	fp=fopen(a,"r");
 	if(fp==NULL){
 		return NULL; 
 	}
 	else{
-		fscanf(fp,"%s %s %s %s %s\n",user->name,user->gender,user->age,user->height,user->weight);
+		fscanf(fp,"%s%s%s%s%s\n",user->name,user->gender,user->age,user->height,user->weight);
 		fclose(fp);
 		return user;
 	}
@@ -270,13 +279,13 @@ struct profile* readfile (int userid){
 
 void newfile (int userid){
 	FILE *fp;
-	char a[20];
+	char a[50];
 	char ss[11];
 	int line=220;
 	char valid[]="Invalid!";
 	
 	ss[0]=0;
-	sprintf(a,"save%d.sav",userid);
+	sprintf(a,"save\\save%d.sav",userid);
 	fp=fopen(a,"w");
 	
 	setcolor(WHITE);
