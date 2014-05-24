@@ -1,5 +1,6 @@
 #include<graphics.h>
-
+#include<stdio.h>
+#include<dos.h>
 #define UP 0x4800
 #define DOWN 0x5000
 #define LEFT 0x4B00
@@ -23,11 +24,24 @@ struct profile {
 	};
 struct menu{
 	int recipeID;
-	char name[11];
-	double energy;//kcal
-	double procnt;//蛋白质？
-};
+	char name[70];
+	int energy;//kcal
+	int procnt;//蛋白质？
+} load[100];
+int recipenum=2;//NEW! 记录菜品总数！
+void readmenu(){
+	int i,x=0;
+	char a[100];
+	char *ap=a;
+//以下为使用方法
+	FILE *fp;
+	fp=fopen("recipes","r");
+	for (i=0;i<recipenum;i++){
+		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+i)->recipeID),(load+i)->name,&((load+i)->energy),&((load+i)->procnt));
+	}//把所有菜品读取
 
+	fclose(fp);
+}
 void pw_background();//画背景 
 void pw_homepage();//画主页
 
@@ -43,7 +57,14 @@ char* input(int x,int y,int max);
 int main(){
 	FILE *fp;
 	int driver=DETECT,mode=VESA_800x600x8bit;
+	int maini;//readmenu
 	initgraph(&driver,&mode,"PW");
+//readmenu
+	fp=fopen("recipes","r");
+	for (maini=0;maini<recipenum;maini++){
+		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+maini)->recipeID),(load+maini)->name,&((load+maini)->energy),&((load+maini)->procnt));
+	}//把所有菜品读取
+	fclose(fp);
 	pw_background();
 	pw_homepage();
 	return 0;
@@ -172,10 +193,15 @@ void pw_homebar3(){
 	int index=1,key;
 	int posx=90,posy=40;
 	char a[50];
+	PIC *name;
 	old=malloc(800*600);
 	getimage(0,0,799,599,old);
 	sprintf(a,"pic\\%d.bmp",index);
 	load_8bit_bmp(posx,posy,a);
+	setcolor(RED);
+	name=get_ttf_text_pic(load->name,"font\\msyhbd.ttc",20); 
+	draw_picture(300,400,name);
+	destroy_picture(name);
 	while(1)
 	if(bioskey(1)!=0){
 		key=bioskey(0);
@@ -183,11 +209,19 @@ void pw_homebar3(){
 			index--;
 			sprintf(a,"pic\\%d.bmp",index);
 			load_8bit_bmp(posx,posy,a);
+			setcolor(RED);
+			name=get_ttf_text_pic((load+index-1)->name,"font\\msyhbd.ttc",20); 
+			draw_picture(300,400,name);
+			destroy_picture(name);
 		}//按下上键 
 		else if((key==DOWN||key==RIGHT)&&index!=2){
 			index++;
 			sprintf(a,"pic\\%d.bmp",index);
 			load_8bit_bmp(posx,posy,a);
+			setcolor(RED);
+			name=get_ttf_text_pic((load+index-1)->name,"font\\msyhbd.ttc",20); 
+			draw_picture(300,400,name);
+			destroy_picture(name);
 		}//按下下键 
 		else if(key==0x011B){
 			putimage(0,0,old,COPY_PUT);
