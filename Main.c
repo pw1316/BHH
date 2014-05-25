@@ -1,6 +1,7 @@
 #include<graphics.h>
 #include<stdio.h>
 #include<dos.h>
+
 #define UP 0x4800
 #define DOWN 0x5000
 #define LEFT 0x4B00
@@ -11,6 +12,7 @@
 
 #define BAR_WIDTH 125 
 #define BAR_HEIGHT 50
+#define RECIPENUM 2 
 
 int curid=-1;
 
@@ -28,26 +30,14 @@ struct menu{
 	int energy;//kcal
 	int procnt;//蛋白质？
 } load[100];
-int recipenum=2;//NEW! 记录菜品总数！
-void readmenu(){
-	int i,x=0;
-	char a[100];
-	char *ap=a;
-//以下为使用方法
-	FILE *fp;
-	fp=fopen("recipes","r");
-	for (i=0;i<recipenum;i++){
-		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+i)->recipeID),(load+i)->name,&((load+i)->energy),&((load+i)->procnt));
-	}//把所有菜品读取
 
-	fclose(fp);
-}
+void readmenu();
 void pw_background();//画背景 
 void pw_homepage();//画主页
 
-void pw_homebar3(); 
-void pw_homebar0();
-void pw_homebar4();
+void pw_homebar3(); //show recipe
+void pw_homebar0();//My info +change
+void pw_homebar4();//change profile
 
 struct profile* readfile (int userid);
 void newfile(int userid);
@@ -57,13 +47,14 @@ char* input(int x,int y,int max);
 int main(){
 	FILE *fp;
 	int driver=DETECT,mode=VESA_800x600x8bit;
-	int maini;//readmenu
+//	int maini;//readmenu
 	initgraph(&driver,&mode,"PW");
-//readmenu
-	fp=fopen("recipes","r");
-	for (maini=0;maini<recipenum;maini++){
-		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+maini)->recipeID),(load+maini)->name,&((load+maini)->energy),&((load+maini)->procnt));
-	}//把所有菜品读取
+	readmenu();
+////readmenu
+//	fp=fopen("recipes","r");
+//	for (maini=0;maini<RECIPENUM;maini++){
+//		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+maini)->recipeID),(load+maini)->name,&((load+maini)->energy),&((load+maini)->procnt));
+//	}//把所有菜品读取
 	fclose(fp);
 	pw_background();
 	pw_homepage();
@@ -163,9 +154,14 @@ void pw_homepage(){
 }
 
 void pw_homebar0(){
+	void *old=malloc(800*600);
 	struct profile* user;
 	int line=220;
+	int key;
 	char a[50];
+	char s[50];
+	
+	getimage(0,0,799,599,old);
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
 	if(curid==-1){
@@ -173,8 +169,7 @@ void pw_homebar0(){
 		outtextxy(460,220,"No Information Yet");
 		outtextxy(460,240,"\"Press Any Key To Continue\"");
 		bioskey(0);
-		setfillstyle(SOLID_FILL,BLUE);
-		bar(440,210,700,529);
+		putimage(0,0,old,COPY_PUT);
 		return;
 	}
 	else{
@@ -185,6 +180,39 @@ void pw_homebar0(){
 		sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
+		while(1)
+		if(bioskey(1)!=0){
+			key=bioskey(0);
+			if(key==0x2E63){//c
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				newfile(curid);
+				line=220;	
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				setcolor(WHITE);
+				outtextxy(460,line,"DONE!");line+=20;
+				strcpy(s,"Your Info Has Been Changed");
+				outtextxy(460,line,s);line+=20;
+				outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
+				bioskey(0);
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				line=220;
+				user=readfile(curid);
+				setcolor(WHITE);
+				sprintf(a,"Name:%s",user->name);outtextxy(460,line,a);line+=20;
+				sprintf(a,"Gender:%s",user->gender);outtextxy(460,line,a);line+=20;
+				sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
+				sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
+				sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
+			}
+			else if(key==0x011B){
+				putimage(0,0,old,COPY_PUT);
+				return;
+			}//按下ESC 
+			else printf("%x\n",key);//测试按键的码 
+		}
 	}
 }
 
@@ -214,7 +242,7 @@ void pw_homebar3(){
 			draw_picture(300,400,name);
 			destroy_picture(name);
 		}//按下上键 
-		else if((key==DOWN||key==RIGHT)&&index!=2){
+		else if((key==DOWN||key==RIGHT)&&index!=RECIPENUM){
 			index++;
 			sprintf(a,"pic\\%d.bmp",index);
 			load_8bit_bmp(posx,posy,a);
@@ -431,4 +459,18 @@ char* input(int x,int y,int max){
 			}
 		}
 	}
+}
+
+void readmenu(){
+	int i,x=0;
+	char a[100];
+	char *ap=a;
+	//以下为使用方法
+	FILE *fp;
+	fp=fopen("recipes","r");
+	for (i=0;i<RECIPENUM;i++){
+		fscanf(fp,"%d\n%s\n%d\n%d\n",&((load+i)->recipeID),(load+i)->name,&((load+i)->energy),&((load+i)->procnt));
+	}//把所有菜品读取
+
+	fclose(fp);
 }
