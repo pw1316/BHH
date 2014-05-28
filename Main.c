@@ -12,9 +12,12 @@
 
 #define BAR_WIDTH 125 
 #define BAR_HEIGHT 50
-#define RECIPENUM 2 
+#define RECIPENUM 20 //菜谱数 
+#define HELP_H 22 //底框高 
+#define HELP_W 800 //底框宽 
 
 int curid=-1;
+void *help; //保存底框，暂无用 
 
 struct profile {
 		char name[11];
@@ -64,16 +67,13 @@ int main(){
 }
 
 void pw_background(){
-	int i,j;
 	PIC *title;
 	
-	for(i=0;i<462400;i++){
-		*(_vp+i)=BLUE;
-    }
-	for(i=462400;i<480000;i++){
-	    *(_vp+i)=DARKGRAY;
-	}
-	
+	setfillstyle(SOLID_FILL,BLUE);
+	bar(0,0,799,577);
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,578,799,599);
+
 	setcolor(WHITE);
 	title=get_ttf_text_pic("My Health","font\\msyhbd.ttc",60); 
 	draw_picture(200,50,title);
@@ -162,10 +162,14 @@ void pw_homebar0(){
 	int key;
 	char a[50];
 	char s[50];
+	char *del,delvalid[]="Invalid!";
+	FILE *fdel;
 	
 	getimage(0,0,799,599,old);
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
+	bar(0,578,799,599);
+	
 	if(curid==-1){
 		setcolor(WHITE);
 		outtextxy(460,220,"No Information Yet");
@@ -175,8 +179,9 @@ void pw_homebar0(){
 		return;
 	}
 	else{
-		user=readfile(curid);
 		setcolor(WHITE);
+		outtextxy(8,582,"Back(Bcs) ChangeInfo(c) DeleteUser(d)");
+		user=readfile(curid);
 		sprintf(a,"Name:%s",user->name);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Gender:%s",user->gender);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
@@ -209,7 +214,47 @@ void pw_homebar0(){
 				sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
 				sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
 			}
-			else if(key==0x011B){
+			else if(key==0x2064){//d
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				line=220;
+				setcolor(WHITE);
+				outtextxy(460,line,"Delete Your Current Id?(Y/N)");line+=20;
+				pwpwpw:
+				del=input(460,line,1);
+				if(del[0]=='Y'){
+					setfillstyle(SOLID_FILL,DARKGRAY);
+					bar(600,line,680,line+12);
+					bar(480,line,500,line+12);
+					sprintf(a,"save\\save%d.sav",curid);
+					fdel=fopen(a,"w");
+					fprintf(fdel,"null");
+					fclose(fdel);
+					curid=-1;
+					putimage(0,0,old,COPY_PUT);
+					return;
+				}
+				else if(del[0]!='N'){
+					setcolor(WHITE);
+					outtextxy(600,line,delvalid);
+					setfillstyle(SOLID_FILL,DARKGRAY);
+					bar(460,line,500,line+12);
+					goto pwpwpw;
+				}
+				else{
+					setfillstyle(SOLID_FILL,DARKGRAY);
+					bar(440,210,700,529);
+					line=220;
+					user=readfile(curid);
+					setcolor(WHITE);
+					sprintf(a,"Name:%s",user->name);outtextxy(460,line,a);line+=20;
+					sprintf(a,"Gender:%s",user->gender);outtextxy(460,line,a);line+=20;
+					sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
+					sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
+					sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
+				}
+			}
+			else if(key==BACKSPACE){
 				putimage(0,0,old,COPY_PUT);
 				return;
 			}//按下ESC 
@@ -389,6 +434,8 @@ void newfile (int userid){
 		bar(480,line,500,line+12);
 		strcpy(ss,input(480,line,2));
 	}
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
 	outtextxy(460,line,"HEIGHT:");line+=20;
@@ -400,6 +447,8 @@ void newfile (int userid){
 		bar(480,line,500,line+12);
 		strcpy(ss,input(480,line,3));
 	}
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
 	outtextxy(460,line,"WEIGHT:");line+=20;
@@ -411,6 +460,8 @@ void newfile (int userid){
 		bar(480,line,500,line+12);
 		strcpy(ss,input(480,line,3));
 	}
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(600,line,680,line+12);
 	fprintf(fp,"%s",ss);line+=20;
 	
 	fclose(fp);
@@ -445,7 +496,7 @@ char* input(int x,int y,int max){
 				if(pos>x){
 					pos-=8;
 					setfillstyle(SOLID_FILL,DARKGRAY);
-					bar(pos,line,pos+8,line+11);
+					bar(pos,line,pos+8,line+13);
 					index--;
 					ss[index]=0;
 				}
