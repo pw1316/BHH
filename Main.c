@@ -482,6 +482,7 @@ void pw_homebar2(){
 		int x;
 		int y;
 	};//表示位置
+	void *old=malloc(800*600);
 	int key;//按下的键
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
 	int index=0;//高亮方块编号
@@ -491,7 +492,7 @@ void pw_homebar2(){
 	/*分配getimage空间*/
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
 	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
-	
+	getimage(0,0,799,599,old);
 	/*得到高亮方块*/
 	setfillstyle(SOLID_FILL,RED);
 	bar(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1);
