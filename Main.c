@@ -539,6 +539,7 @@ void pw_homebar2(){
 				outtextxy(pos[index].x+8,pos[index].y+BAR_HEIGHT*11/30,text[index]);
 			}//按下下键 
 			else if(key==0x011B){
+				putimage(0,0,old,COPY_PUT);
 				return;
 			}//按下ESC 
 			else if(key==ENTER){
