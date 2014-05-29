@@ -12,7 +12,7 @@
 
 #define BAR_WIDTH 125 
 #define BAR_HEIGHT 50
-#define RECIPENUM 20 //²ËÆ×Êý 
+#define RECIPENUM 30 //²ËÆ×Êý 
 #define HELP_H 22 //µ×¿ò¸ß 
 #define HELP_W 800 //µ×¿ò¿í 
 
