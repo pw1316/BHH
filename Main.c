@@ -26,8 +26,8 @@ struct profile {
    		char height[4];
    		char weight[4];
    		int recoder; // 记录次数 算平均
-   		double energy;
-   		double procnt;
+   		int energy;
+   		int procnt;
 	};
 struct menu{
 	int recipeID;
@@ -43,8 +43,9 @@ void recode(int index);
 void pw_homebar3(); //show recipe
 void pw_homebar0();//My info +change
 void pw_homebar4();//change profile
-void pw_homebar2();
+void pw_homebar1();
 struct profile* readfile (int userid);
+void writefile(int userid,struct profile *user);
 void newfile(int userid);
 
 char* input(int x,int y,int max);
@@ -150,7 +151,7 @@ void pw_homepage(){
 				if(index==0) pw_homebar0();
 				if(index==4) pw_homebar4();
 				if(index==3) pw_homebar3();
-				if(index==2) pw_homebar2();
+				if(index==1&&curid!=-1) pw_homebar1();
 			}//按下回车
 			else printf("%x\n",key);//测试按键的码 
 		}
@@ -181,7 +182,7 @@ void pw_homebar0(){
 	}
 	else{
 		setcolor(WHITE);
-		outtextxy(8,582,"Back(Bcs) ChangeInfo(c) DeleteUser(d)");
+		outtextxy(8,582,"Back(Esc) ChangeInfo(c) DeleteUser(d)");
 		user=readfile(curid);
 		sprintf(a,"Name:%s",user->name);outtextxy(460,line,a);line+=20;
 		sprintf(a,"Gender:%s",user->gender);outtextxy(460,line,a);line+=20;
@@ -255,7 +256,7 @@ void pw_homebar0(){
 					sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
 				}
 			}
-			else if(key==BACKSPACE){
+			else if(key==ESC){
 				putimage(0,0,old,COPY_PUT);
 				return;
 			}//按下ESC 
@@ -379,7 +380,8 @@ struct profile* readfile (int userid){
 		return NULL; 
 	}
 	else{
-		fscanf(fp,"%s%s%s%s%s\n",user->name,user->gender,user->age,user->height,user->weight);
+		fscanf(fp,"%s %s %s %s %s\n",user->name,user->gender,user->age,user->height,user->weight);
+		fscanf(fp,"%d %d %d",&user->recoder,&user->energy,&user->procnt);
 		fclose(fp);
 		return user;
 	}
@@ -461,20 +463,21 @@ void newfile (int userid){
 	}
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(600,line,680,line+12);
-	fprintf(fp,"%s",ss);line+=20;
-	
+	fprintf(fp,"%s\n",ss);line+=20;
+	fprintf(fp,"%d %d %d",0,0,0);
 	fclose(fp);
 }
 
-//void writefile (int userid, struct profile *user){
-//	FILE *fp;
-//	char a[20];
-//	int n,i;
-//	sprintf(a,"save%d.sav",userid);
-//	fp=fopen(a,"w");
-//    fprintf(fp,"%s %s %s\n",user->name,user->num,user->score);
-//    fclose(fp);
-//}
+void writefile (int userid,struct profile *user){
+	FILE *fp;
+	char a[20];
+	int n,i;
+	sprintf(a,"save\\save%d.sav",userid);
+	fp=fopen(a,"w");
+    fprintf(fp,"%s %s %s %s %s\n",user->name,user->gender,user->age,user->height,user->weight);
+    fprintf(fp,"%d %d %d\n",user->recoder,user->energy,user->procnt);
+    fclose(fp);
+}
 
 char* input(int x,int y,int max){
 	char c;
@@ -527,7 +530,7 @@ void readmenu(){
 	fclose(fp);
 }
 //
-void pw_homebar2(){
+void pw_homebar1(){
 		struct Pos{
 		int x;
 		int y;
@@ -602,8 +605,9 @@ void pw_homebar2(){
 //注意！！这里读不到user数据（因为没有read）暂时懒得写
 void recode(int index){
 	int recoder;
-	struct profile* user=readfile(curid); 
+	struct profile *user; 
 	int e=0,p=0;
+	user=readfile(curid); 
 	recoder=user->recoder; 
 	user->recoder++;
 	if (index==1) {
@@ -623,5 +627,6 @@ void recode(int index){
 
 	user->energy=((user->energy * recoder) + e)/(recoder+1);
 	user->procnt=((user->procnt * recoder) + p)/(recoder+1);
+	writefile(curid,user);
 	return;
 }
