@@ -35,7 +35,7 @@ struct menu{
 	int energy;//kcal
 	int procnt;//蛋白质？
 } load[100];
-struct profile* user;
+
 void readmenu();
 void pw_background();//画背景 
 void pw_homepage();//画主页
@@ -159,6 +159,7 @@ void pw_homepage(){
 void pw_homebar0(){
 	void *old=malloc(800*600);
 	int line=220;
+	struct profile* user;
 	int key;
 	char a[50];
 	char s[50];
@@ -258,7 +259,6 @@ void pw_homebar0(){
 				putimage(0,0,old,COPY_PUT);
 				return;
 			}//按下ESC 
-			else printf("%x\n",key);//测试按键的码 
 		}
 	}
 }
@@ -302,7 +302,6 @@ void pw_homebar3(){
 			putimage(0,0,old,COPY_PUT);
 			return;
 		}//按下ESC 
-		else printf("%x\n",key);//测试按键的码 
 	}
 }
 
@@ -597,14 +596,15 @@ void pw_homebar2(){
 			else if(key==ENTER){
 				recode(index);
 			}//按下回车
-			else printf("%x\n",key);//测试按键的码 
 		}
 }
 
 //注意！！这里读不到user数据（因为没有read）暂时懒得写
 void recode(int index){
-	int recoder=user->recoder;
+	int recoder;
+	struct profile* user=readfile(curid); 
 	int e=0,p=0;
+	recoder=user->recoder; 
 	user->recoder++;
 	if (index==1) {
 		e=500;
