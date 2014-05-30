@@ -535,6 +535,9 @@ void pw_homebar1(){
 		int x;
 		int y;
 	};//表示位置
+	int recoder;
+	struct profile *user; 
+	int e=0,p=0;
 	void *old=malloc(800*600);
 	int key;//按下的键
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
@@ -597,11 +600,33 @@ void pw_homebar1(){
 				return;
 			}//按下ESC 
 			else if(key==ENTER){
-				recode(index);
+				{	
+				user=readfile(curid); 
+				recoder=user->recoder; 
+				user->recoder++;
+				if (index==1) {
+					e=500;
+					p=19;
+				}
+				else if (index==2){
+					e=700;
+					p=30;
+				}
+				else if (index==3){
+					e=1000;
+					p=40;
+				}
+				else {e=1500;p=60;}
+
+
+				user->energy=((user->energy * recoder) + e)/(recoder+1);
+				user->procnt=((user->procnt * recoder) + p)/(recoder+1);
+				writefile(curid,user);}
+
 			}//按下回车
 		}
 }
-
+/*
 //注意！！这里读不到user数据（因为没有read）暂时懒得写
 void recode(int index){
 	int recoder;
@@ -630,3 +655,4 @@ void recode(int index){
 	writefile(curid,user);
 	return;
 }
+*/
