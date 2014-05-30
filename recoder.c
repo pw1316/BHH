@@ -1,4 +1,4 @@
-//分析饮食
+/*分析饮食
 struct profile {
 		char name[11];
    		char gender[2];
@@ -21,21 +21,20 @@ void pw_homebar2(){
 	struct Pos pos[5]={{300,200},{300,280},{300,350},{300,420},{300,490}};//各方块位置
 	char *text[5]={"Not eat","Some vegs","Many vegs","Some meat","Lots of meat"};//各方块上打印的信息 
 	
-	/*分配getimage空间*/
+	//分配getimage空间
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
 	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
-	
-	/*得到高亮方块*/
+
 	setfillstyle(SOLID_FILL,RED);
 	bar(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1);
 	getimage(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1,tmp_h_bar);
 	
-	/*得到低亮方块*/ 
+
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1);
 	getimage(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1,tmp_bar);
 	
-	/*画方块及字*/ 
+	/*画方块及字
 	putimage(pos[0].x,pos[0].y,tmp_h_bar,COPY_PUT);
 	putimage(pos[1].x,pos[1].y,tmp_bar,COPY_PUT);
 	putimage(pos[2].x,pos[2].y,tmp_bar,COPY_PUT);
@@ -49,7 +48,7 @@ void pw_homebar2(){
 	outtextxy(pos[3].x+8,pos[3].y+BAR_HEIGHT*11/30,text[3]);
 	outtextxy(pos[4].x+8,pos[4].y+BAR_HEIGHT*11/30,text[4]);
 	
-	/*循环键盘输入*/ 
+	/*循环键盘输入 
 	while(1)
 		if(bioskey(1)!=0){
 			key=bioskey(0);
@@ -83,6 +82,54 @@ void pw_homebar2(){
 		}
 }
 }
+*/
+//上面的已经合并到main 下面是推荐菜谱部分
+struct profile {
+		char name[11];
+   		char gender[2];
+   		char age[3];
+   		char height[4];
+   		char weight[4];
+   		int recoder; // 记录次数 算平均
+   		int energy;
+   		int procnt;
+	};
+struct menu{
+	int recipeID;
+	char name[70];
+	int energy;//kcal
+	int procnt;//蛋白质？
+}load[100];
 
 
-
+int recommand(){
+	struct profile *user; 
+	user=readfile(curid); 
+	int ri,std,flag=0,cur;
+	cur=user->energy * user->recoder;
+	if (*(user->gender)=='M')
+		std=900;
+	else
+		std=750;
+	for (ri=0;ri<RECIPENUM;ri++){
+		if (fabs(((load+ri)->energy + cur)/(user->recoder+1)-std)<fabs(((load+flag)->energy + cur)/(user->recoder+1)-std))
+			flag=ri;
+		}
+	return flag;
+}
+//特殊功能食谱 平衡蛋白质
+int recommand2(){
+	struct profile *user; 
+	user=readfile(curid); 
+	int ri,std,flag=0,cur;
+	cur=user->procnt * user->procnt
+	if (*(user->gender)=='M')
+		std=80/3;
+	else
+		std=70/3;
+	for (ri=0;ri<RECIPENUM;ri++){
+		if (fabs(((load+ri)->procnt + cur)/(user->recoder+1)-std)<fabs(((load+flag)->procnt + cur)/(user->recoder+1)-std))
+			flag=ri;
+		}
+	return flag;
+}
