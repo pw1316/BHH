@@ -27,14 +27,14 @@ struct profile {
    		int recoder; // 记录次数 算平均
    		int energy;
    		int procnt;
-	};
+	}users;
 struct menu{
 	int recipeID;
 	char name[70];
 	int energy;//kcal
 	int procnt;//蛋白质？
 } load[100];
-
+struct profile* user;
 void readmenu();
 void pw_background();//画背景 
 void pw_homepage();//画主页
@@ -46,7 +46,6 @@ void pw_homebar1();
 struct profile* readfile (int userid);
 void writefile(int userid,struct profile *user);
 void newfile(int userid);
-
 char* input(int x,int y,int max);
 
 int main(){
@@ -55,6 +54,7 @@ int main(){
 //	int maini;//readmenu
 	initgraph(&driver,&mode,"PW");
 	readmenu();
+	user=&users;
 ////readmenu
 //	fp=fopen("recipes","r");
 //	for (maini=0;maini<RECIPENUM;maini++){
@@ -390,7 +390,6 @@ void pw_homebar4(){
 
 struct profile* readfile (int userid){
 	FILE *fp;
-	struct profile* user;
 	char c;
 	char a[20];
 	int n=0;
@@ -591,7 +590,7 @@ void pw_homebar1(){
 	struct Pos pos[5]={{300,210},{300,280},{300,350},{300,420},{300,490}};//各方块位置
 	char *text[5]={"Not eat","Some vegs","Many vegs","Some meat","Lots of meat"};//各方块上打印的信息 
 	char a[50];//继续sprintf 
-	
+	user=readfile(curid);
 	/*分配getimage空间*/
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
 	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
@@ -620,7 +619,6 @@ void pw_homebar1(){
 	outtextxy(pos[3].x+8,pos[3].y+BAR_HEIGHT*11/30,text[3]);
 	outtextxy(pos[4].x+8,pos[4].y+BAR_HEIGHT*11/30,text[4]);
 	
-	user=readfile(curid);
 	
 	sprintf(a,"You have recorded %d times",user->recoder);
 	setfillstyle(SOLID_FILL,DARKGRAY);
@@ -671,7 +669,8 @@ void pw_homebar1(){
 					p=40;
 				}
 				else if(index==4){
-					e=1500;p=60;
+					e=1500;
+					p=60;
 				}
 				else{e=p=0;} 
 
