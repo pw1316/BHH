@@ -10,14 +10,13 @@
 #define ENTER 0x1C0D
 #define BACKSPACE 0x0E08
 
-#define BAR_WIDTH 125 
+#define BAR_WIDTH 175 
 #define BAR_HEIGHT 50
 #define RECIPENUM 30 //菜谱数 
 #define HELP_H 22 //底框高 
 #define HELP_W 800 //底框宽 
 
 int curid=-1;
-void *help; //保存底框，暂无用 
 
 struct profile {
 		char name[11];
@@ -205,6 +204,12 @@ void pw_homebar0(){
 				outtextxy(460,line,s);line+=20;
 				outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
 				bioskey(0);
+				
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(0,600-HELP_H,799,599);
+				setcolor(WHITE);
+				outtextxy(8,582,"Back(Esc) ChangeInfo(c) DeleteUser(d)");
+				
 				setfillstyle(SOLID_FILL,DARKGRAY);
 				bar(440,210,700,529);
 				line=220;
@@ -222,6 +227,10 @@ void pw_homebar0(){
 				line=220;
 				setcolor(WHITE);
 				outtextxy(460,line,"Delete Your Current Id?(Y/N)");line+=20;
+				
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(0,600-HELP_H,799,599);
+				
 				pwpwpw:
 				del=input(460,line,1);
 				if(del[0]=='Y'){
@@ -254,6 +263,11 @@ void pw_homebar0(){
 					sprintf(a,"Age:%s",user->age);outtextxy(460,line,a);line+=20;
 					sprintf(a,"Height:%scm",user->height);outtextxy(460,line,a);line+=20;
 					sprintf(a,"Weight:%skg",user->weight);outtextxy(460,line,a);line+=20;
+					
+					setfillstyle(SOLID_FILL,DARKGRAY);
+					bar(0,600-HELP_H,799,599);
+					setcolor(WHITE);
+					outtextxy(8,582,"Back(Esc) ChangeInfo(c) DeleteUser(d)");
 				}
 			}
 			else if(key==ESC){
@@ -272,6 +286,12 @@ void pw_homebar3(){
 	PIC *name;
 	old=malloc(800*600);
 	getimage(0,0,799,599,old);
+	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,599-HELP_H+1,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Roll up(UP,LEFT) Roll down(DOWN,RIGHT) Back(Esc)");
+	 
 	sprintf(a,"pic\\%d.bmp",index);
 	load_8bit_bmp(posx,posy,a);
 	setcolor(RED);
@@ -401,6 +421,12 @@ void newfile (int userid){
 	setcolor(WHITE);
 	
 	outtextxy(460,line,"NAME:");line+=20;
+	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Hint:Start with a non-number within 10 letters(Can't be \"null\").");
+	
 	strcpy(ss,input(480,line,10));
 	while(strcmp(ss,"null")==0||ss[0]>=48&&ss[0]<=57){
 		setcolor(WHITE);
@@ -412,6 +438,11 @@ void newfile (int userid){
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
+	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Hint:Type \"M\" for male and \"F\" for female.");
 	
 	outtextxy(460,line,"GENDER:");line+=20;
 	strcpy(ss,input(480,line,1));
@@ -426,6 +457,11 @@ void newfile (int userid){
 	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Hint:The length of the string is 2. E.g. \"02\" \"18\"");
+	
 	outtextxy(460,line,"AGE:");line+=20;
 	strcpy(ss,input(480,line,2));
 	while(ss[0]<48||ss[0]>57||ss[1]<48||ss[1]>57){
@@ -439,6 +475,11 @@ void newfile (int userid){
 	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
 	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Hint:The length of the string is 3 and the unit is cm. E.g. \"098\" \"180\"");
+	
 	outtextxy(460,line,"HEIGHT:");line+=20;
 	strcpy(ss,input(480,line,3));
 	while(ss[0]<48||ss[0]>57||ss[1]<48||ss[1]>57||ss[2]<48||ss[2]>57){
@@ -451,6 +492,11 @@ void newfile (int userid){
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(600,line,680,line+12);
 	fprintf(fp,"%s ",ss);line+=20;
+	
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Hint:The length of the string is 3 and the unit is kg. E.g. \"098\" \"180\"");
 	
 	outtextxy(460,line,"WEIGHT:");line+=20;
 	strcpy(ss,input(480,line,3));
@@ -542,8 +588,9 @@ void pw_homebar1(){
 	int key;//按下的键
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
 	int index=0;//高亮方块编号
-	struct Pos pos[5]={{300,200},{300,280},{300,350},{300,420},{300,490}};//各方块位置
+	struct Pos pos[5]={{300,210},{300,280},{300,350},{300,420},{300,490}};//各方块位置
 	char *text[5]={"Not eat","Some vegs","Many vegs","Some meat","Lots of meat"};//各方块上打印的信息 
+	char a[50];//继续sprintf 
 	
 	/*分配getimage空间*/
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
@@ -573,6 +620,14 @@ void pw_homebar1(){
 	outtextxy(pos[3].x+8,pos[3].y+BAR_HEIGHT*11/30,text[3]);
 	outtextxy(pos[4].x+8,pos[4].y+BAR_HEIGHT*11/30,text[4]);
 	
+	user=readfile(curid);
+	
+	sprintf(a,"You have recorded %d times",user->recoder);
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,a);
+	
 	/*循环键盘输入*/ 
 	while(1)
 		if(bioskey(1)!=0){
@@ -600,8 +655,7 @@ void pw_homebar1(){
 				return;
 			}//按下ESC 
 			else if(key==ENTER){
-				{	
-				user=readfile(curid); 
+				{	 
 				recoder=user->recoder; 
 				user->recoder++;
 				if (index==1) {
@@ -616,12 +670,21 @@ void pw_homebar1(){
 					e=1000;
 					p=40;
 				}
-				else {e=1500;p=60;}
+				else if(index==4){
+					e=1500;p=60;
+				}
+				else{e=p=0;} 
 
 
 				user->energy=((user->energy * recoder) + e)/(recoder+1);
 				user->procnt=((user->procnt * recoder) + p)/(recoder+1);
 				writefile(curid,user);}
+				
+				sprintf(a,"You have recorded %d times",user->recoder);
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(0,600-HELP_H,799,599);
+				setcolor(WHITE);
+				outtextxy(8,582,a);
 
 			}//按下回车
 		}
