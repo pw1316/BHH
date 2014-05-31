@@ -10,7 +10,7 @@
 #define ENTER 0x1C0D
 #define BACKSPACE 0x0E08
 
-#define BAR_WIDTH 175 
+#define BAR_WIDTH 125 
 #define BAR_HEIGHT 50
 #define RECIPENUM 30 //菜谱数 
 #define HELP_H 22 //底框高 
@@ -39,6 +39,7 @@ void readmenu();
 void pw_background();//画背景 
 void pw_homepage();//画主页
 void recode(int index);
+void pw_homebar2();
 void pw_homebar3(); //show recipe
 void pw_homebar0();//My info +change
 void pw_homebar4();//change profile
@@ -91,7 +92,7 @@ void pw_homepage(){
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
 	int index=0;//高亮方块编号
 	struct Pos pos[5]={{80,210},{80,280},{80,350},{80,420},{80,490}};//各方块位置
-	char *text[5]={"My Info","My Eating","Food","Recipe","Change Profile"};//各方块上打印的信息 
+	char *text[5]={"My Info","My Eating","Recommend","Recipe","Change Profile"};//各方块上打印的信息 
 	
 	/*分配getimage空间*/
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
@@ -151,6 +152,7 @@ void pw_homepage(){
 				if(index==4) pw_homebar4();
 				if(index==3) pw_homebar3();
 				if(index==1&&curid!=-1) pw_homebar1();
+				if(index==2&&curid!=-1) pw_homebar2();
 			}//按下回车
 			else printf("%x\n",key);//测试按键的码 
 		}
@@ -327,11 +329,12 @@ void pw_homebar3(){
 }
 
 void pw_homebar4(){
+	void *old=malloc(800*600);
 	int line=220;
 	int id=0,key,index=0;
 	char s[50],idd[4];
 	char a[50];
-	struct profile* user;
+	getimage(0,0,799,599,old);
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
 	
@@ -363,8 +366,7 @@ void pw_homebar4(){
 		outtextxy(460,line,s);line+=20;
 		outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
 		bioskey(0);
-		setfillstyle(SOLID_FILL,BLUE);
-		bar(440,210,700,529);
+		putimage(0,0,old,COPY_PUT);
 		return;
 	}
 	else{
@@ -381,8 +383,7 @@ void pw_homebar4(){
 	outtextxy(460,line,s);line+=20;
 	outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
 	bioskey(0);
-	setfillstyle(SOLID_FILL,BLUE);
-	bar(440,210,700,529);
+	putimage(0,0,old,COPY_PUT);
 	return;
 }
 
@@ -581,29 +582,29 @@ void pw_homebar1(){
 		int y;
 	};//表示位置
 	int recoder;
-	struct profile *user; 
 	int e=0,p=0;
 	void *old=malloc(800*600);
 	int key;//按下的键
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
 	int index=0;//高亮方块编号
-	struct Pos pos[5]={{300,210},{300,280},{300,350},{300,420},{300,490}};//各方块位置
+	struct Pos pos[5]={{250,210},{250,280},{250,350},{250,420},{250,490}};//各方块位置
 	char *text[5]={"Not eat","Some vegs","Many vegs","Some meat","Lots of meat"};//各方块上打印的信息 
 	char a[50];//继续sprintf 
+	int line=220;
 	user=readfile(curid);
 	/*分配getimage空间*/
-	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
-	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1));
+	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
+	tmp_h_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
 	getimage(0,0,799,599,old);
 	/*得到高亮方块*/
 	setfillstyle(SOLID_FILL,RED);
-	bar(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1);
-	getimage(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1,tmp_h_bar);
+	bar(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1);
+	getimage(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1,tmp_h_bar);
 	
 	/*得到低亮方块*/ 
 	setfillstyle(SOLID_FILL,DARKGRAY);
-	bar(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1);
-	getimage(pos[0].x,pos[0].y,pos[0].x+251-1,pos[0].y+BAR_HEIGHT-1,tmp_bar);
+	bar(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1);
+	getimage(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1,tmp_bar);
 	
 	/*画方块及字*/ 
 	putimage(pos[0].x,pos[0].y,tmp_h_bar,COPY_PUT);
@@ -619,8 +620,18 @@ void pw_homebar1(){
 	outtextxy(pos[3].x+8,pos[3].y+BAR_HEIGHT*11/30,text[3]);
 	outtextxy(pos[4].x+8,pos[4].y+BAR_HEIGHT*11/30,text[4]);
 	
+	if(user->recoder==0) recoder=1;
+	else recoder=user->recoder;
+	line=220;
+	setfillstyle(SOLID_FILL,DARKGRAY);
+	bar(440,210,700,529);
+	setcolor(WHITE);
+	sprintf(a,"E: %d",user->energy/recoder);
+	outtextxy(460,line,a);line+=20;
+	sprintf(a,"P: %d",user->procnt/recoder);
+	outtextxy(460,line,a);line+=20; 
 	
-	sprintf(a,"You have recorded %d times",user->recoder);
+	sprintf(a,"You Have Recorded %d Times.Reset(r) Back(Esc)",user->recoder);
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(0,600-HELP_H,799,599);
 	setcolor(WHITE);
@@ -654,7 +665,6 @@ void pw_homebar1(){
 			}//按下ESC 
 			else if(key==ENTER){
 				{	 
-				recoder=user->recoder; 
 				user->recoder++;
 				if (index==1) {
 					e=500;
@@ -675,46 +685,99 @@ void pw_homebar1(){
 				else{e=p=0;} 
 
 
-				user->energy=((user->energy * recoder) + e)/(recoder+1);
-				user->procnt=((user->procnt * recoder) + p)/(recoder+1);
+//				user->energy=((user->energy * recoder) + e)/(recoder+1);
+//				user->procnt=((user->procnt * recoder) + p)/(recoder+1);
+				user->energy+=e;
+				user->procnt+=p;
 				writefile(curid,user);}
 				
-				sprintf(a,"You have recorded %d times",user->recoder);
+				if(user->recoder==0) recoder=1;
+				else recoder=user->recoder;
+				line=220;
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				setcolor(WHITE);
+				sprintf(a,"E: %d",user->energy/recoder);
+				outtextxy(460,line,a);line+=20;
+				sprintf(a,"P: %d",user->procnt/recoder);
+				outtextxy(460,line,a);line+=20; 
+				
+				sprintf(a,"You Have Recorded %d Times.Reset(r) Back(Esc)",user->recoder);
 				setfillstyle(SOLID_FILL,DARKGRAY);
 				bar(0,600-HELP_H,799,599);
 				setcolor(WHITE);
 				outtextxy(8,582,a);
-
-			}//按下回车
+			}//按下回车 
+			else if(key==0x1372){
+				user->recoder=0;
+				user->energy=0;
+				user->procnt=0;
+				writefile(curid,user);
+				sprintf(a,"You Have Recorded %d Times.Reset(r) Back(Esc)",user->recoder);
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(0,600-HELP_H,799,599);
+				setcolor(WHITE);
+				outtextxy(8,582,a);
+				line=220;
+				setfillstyle(SOLID_FILL,DARKGRAY);
+				bar(440,210,700,529);
+				setcolor(WHITE);
+				sprintf(a,"E: %d",user->energy);
+				outtextxy(460,line,a);line+=20;
+				sprintf(a,"P: %d",user->procnt);
+				outtextxy(460,line,a);line+=20; 
+			}
 		}
 }
-/*
-//注意！！这里读不到user数据（因为没有read）暂时懒得写
-void recode(int index){
+
+void pw_homebar2(){
+	void *old=malloc(800*600);
+	int ri,std,flag=0;
 	int recoder;
-	struct profile *user; 
-	int e=0,p=0;
+	int e,p,stde,stdp;
+	int line=220;
+	char a[50];
+	getimage(0,0,799,599,old);
 	user=readfile(curid); 
-	recoder=user->recoder; 
-	user->recoder++;
-	if (index==1) {
-		e=500;
-		p=19;
+	
+	if(user->recoder==0){
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(440,210,700,529);
+		setcolor(WHITE);
+		outtextxy(460,line,"No Information Yet!");line+=20;
+		outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
+		bioskey(0);
+		putimage(0,0,old,COPY_PUT);
+		return;
 	}
-	else if (index==2){
-		e=700;
-		p=30;
+	else{
+		e=user->energy;
+		p=user->procnt;
+		if(user->recoder==0) recoder=1;
+		else recoder=user->recoder;
+		setfillstyle(SOLID_FILL,DARKGRAY);
+		bar(440,210,700,529);
+		setcolor(WHITE);
+		outtextxy(460,line,"Your Current Level:");line+=20;
+		sprintf(a,"Energy:%d Procnt:%d",user->energy/recoder,user->procnt/recoder);
+		outtextxy(460,line,a);line+=20;
+		
+		if (*(user->gender)=='M'){
+			stde=900;stdp=80/3;
+		}
+		else{
+			stde=750;stdp=70/3;
+		}
+		for (ri=0;ri<RECIPENUM;ri++){
+			if (fabs(((load+ri)->energy + e)/(user->recoder+1)-stde)<fabs(((load+flag)->energy + e)/(user->recoder+1)-stde))
+				flag=ri;
+		}
+		outtextxy(460,line,"We Recommend:");line+=20;
+		//sprintf(a,"")
+		outtextxy(460,line,(load+flag)->name);line+=20;
+		outtextxy(460,line,"\"Press Any Key To Continue\"");line+=20;
+		bioskey(0);
+		putimage(0,0,old,COPY_PUT);
+		return;
 	}
-	else if (index==3){
-		e=1000;
-		p=40;
-	}
-	else {e=1500;p=60;}
-
-
-	user->energy=((user->energy * recoder) + e)/(recoder+1);
-	user->procnt=((user->procnt * recoder) + p)/(recoder+1);
-	writefile(curid,user);
-	return;
 }
-*/
