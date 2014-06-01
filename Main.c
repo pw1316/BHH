@@ -92,7 +92,7 @@ void pw_homepage(){
 	void *tmp_bar,*tmp_h_bar;//存储临时方块，getimage用
 	int index=0;//高亮方块编号
 	struct Pos pos[5]={{80,210},{80,280},{80,350},{80,420},{80,490}};//各方块位置
-	char *text[5]={"My Info","My Eating","Recommend","Recipe","Change Profile"};//各方块上打印的信息 
+	char *text[5]={"My Info","My Eating","Recommend","Recipe","Change User"};//各方块上打印的信息 
 	
 	/*分配getimage空间*/
 	tmp_bar=malloc(imagesize(pos[0].x,pos[0].y,pos[0].x+BAR_WIDTH-1,pos[0].y+BAR_HEIGHT-1));
