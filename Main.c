@@ -337,10 +337,27 @@ void pw_homebar4(){
 	getimage(0,0,799,599,old);
 	setfillstyle(SOLID_FILL,DARKGRAY);
 	bar(440,210,700,529);
+	bar(0,600-HELP_H,799,599);
+	setcolor(WHITE);
+	outtextxy(8,582,"Please Input A Number");
 	
 	setcolor(WHITE);
 	outtextxy(460,line,"What Is Your Id?");line+=20;
+	pwpwpw2:
+	index=0;
 	strcpy(idd,input(460,line,10));line+=20;
+	while(idd[index]!=0){
+		if(idd[index]<48||idd[index]>57){
+			line=220;
+			setfillstyle(SOLID_FILL,DARKGRAY);
+			bar(440,210,700,529);
+			setcolor(WHITE);
+			outtextxy(460,line,"What Is Your Id?");line+=20;
+			goto pwpwpw2;
+		}
+		index++;
+	} 
+	index=0;
 	while(idd[index]!=0){
 		id=id*10+idd[index]-48;
 		index++;
@@ -589,7 +606,7 @@ void pw_homebar1(){
 	int index=0;//高亮方块编号
 	struct Pos pos[5]={{250,210},{250,280},{250,350},{250,420},{250,490}};//各方块位置
 	char *text[5]={"Not eat","Some vegs","Many vegs","Some meat","Lots of meat"};//各方块上打印的信息 
-	char a[50];//继续sprintf 
+	char a[50],b[50];//继续sprintf 
 	int line=220;
 	user=readfile(curid);
 	/*分配getimage空间*/
@@ -669,20 +686,24 @@ void pw_homebar1(){
 				if (index==1) {
 					e=500;
 					p=19;
+					strcpy(b,"Little,Eat More Next Time.");
 				}
 				else if (index==2){
 					e=700;
 					p=30;
+					strcpy(b,"Keep On,Or Have More Choices.");
 				}
 				else if (index==3){
 					e=1000;
 					p=40;
+					strcpy(b,"Not Bad,But Don't Be So Often.");
 				}
 				else if(index==4){
 					e=1500;
 					p=60;
+					strcpy(b,"Control,Control,Your Weight.");
 				}
-				else{e=p=0;} 
+				else{e=p=0;strcpy(b,"Well,You Must Eat Something.");} 
 
 
 //				user->energy=((user->energy * recoder) + e)/(recoder+1);
@@ -700,7 +721,8 @@ void pw_homebar1(){
 				sprintf(a,"E: %d",user->energy/recoder);
 				outtextxy(460,line,a);line+=20;
 				sprintf(a,"P: %d",user->procnt/recoder);
-				outtextxy(460,line,a);line+=20; 
+				outtextxy(460,line,a);line+=20;
+				outtextxy(460,line,b);
 				
 				sprintf(a,"You Have Recorded %d Times.Reset(r) Back(Esc)",user->recoder);
 				setfillstyle(SOLID_FILL,DARKGRAY);
